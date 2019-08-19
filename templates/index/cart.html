@@ -1,0 +1,234 @@
+{% extends 'layout.html' %}
+{% load staticfiles %}
+{% block body %}
+{#	<div class="search_bar clearfix">#}
+{#		<a href="index.html" class="logo fl"><img src='{% static "images/logo.png" %}'></a>#}
+{#		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;购物车</div>#}
+{#		<div class="search_con fr">#}
+{#			<input type="text" class="input_text fl" name="" placeholder="搜索商品">#}
+{#			<input type="button" class="input_btn fr" name="" value="搜索">#}
+{#		</div>		#}
+{#	</div>#}
+
+	<div class="total_count">全部商品<em>{{ shopping_car_count }}</em>件</div>
+	<ul class="cart_list_th clearfix">
+		<li class="col01">商品名称</li>
+		<li class="col02">商品单位</li>
+		<li class="col03">商品价格</li>
+		<li class="col04">数量</li>
+		<li class="col05">小计</li>
+		<li class="col06">操作</li>
+	</ul>
+    {% for item in cart_list %}
+        {% csrf_token %}
+	<ul class="cart_list_td clearfix" id="ul_{{ item.pk }}">
+		<li class="col01"><input type="checkbox" name="goods" checked id="{{ item.pk }}"></li>
+		<li class="col02"><img src="/media/{{item.goods__goodsimg__img}}"></li>
+		<li class="col03">{{ item.goods__name }}<br><em>{{ item.goods__price }}元/500g</em></li>
+		<li class="col04">500g</li>
+		<li class="col05">{{ item.goods__name }}/元</li>
+		<li class="col06">
+			<div class="num_add">
+				<a href="javascript:;" class="minus fl" >-</a>
+				<input type="text" class="num_show fl"  value="{{ item.count }}" onchange="inchane(this)">
+				<a href="javascript:;" class="add fl">+</a>
+			</div>
+		</li>
+		<li class="col07">{%  widthratio item.goods__price 1 item.count %}元</li>
+		<li class="col08"><a href="javascript:;" id="{{ item.pk  }}"class="del">删除</a></li>
+	</ul>
+
+	{% endfor %}
+	
+
+	<ul class="settlements">
+		<li class="col01"><input type="checkbox" name="check_all" checked class="check_all1"></li>
+		<li class="col02">全选</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b>2</b>件商品</li>
+		<li class="col04"><a href="javascript:;">去结算</a></li>
+	</ul>
+
+
+	
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static 'plug/jquery/jquery-3.2.1.js' %}"></script>
+    <script>
+
+    chack_count_price()
+    $("input[name^='goods']").each(function(i){
+        inchane($(this).parent().nextAll('.col06').children().children('input'))
+    });
+    function chack_count_price() {
+        {# 统计 所有选中商品的价格 数量 #}
+        var count = 0
+        var price = 0
+        $("input[name^='goods']").each(function(i){
+
+        //input[name^='selected']"意思是匹配input的name以selected开头的表单。
+            if($(this)[0].checked){
+                count ++
+                var temp_price = Number($('#ul_'+this.id+' .col07').html().split('元')[0])
+
+                price = price + temp_price
+            }
+        });
+        $('.settlements .col03 em').html(price)
+        $('.settlements .col03 b').html(count)
+    }
+    function checked_all(flag) {
+        {# 实现全选功能 #}
+        $("input[name^='goods']").each(function(i){
+        //input[name^='selected']"意思是匹配input的name以selected开头的表单。
+            if (flag){
+                $(this).attr("checked", 'checked');//or
+                $(this).attr("checked", true);//or
+                $(this)[0].checked=true
+            }else {
+                $(this).attr("checked", '');//or
+                $(this).attr("checked", false);//or
+                $(this)[0].checked=false
+            }
+        });
+
+    }
+    {# 当+号被点击是发生的事件 #}
+    $('.add').click(function () {
+            var count = $(this).prev().val()
+            count = Number(count)+1
+            $(this).prev().val(count)
+            var UnitPrice = $(this).parent().parent().prev().prev().prev().children('em').html().split('元/500g')[0]
+
+            var temp = $(this).parent().parent().next().html(count*UnitPrice+'元')
+
+
+            chack_count_price()
+        })
+{# 当- 号被点击是发生的事件 #}
+    $('.minus').click(function () {
+        var count = $(this).next().val()
+        if (count >1) {
+            count = Number(count) - 1
+            if (count<1){
+               $(this).parent().parent().prev().prev().prev().prevAll('.col01').children()[0].checked=false
+
+            }
+            $(this).next().val(count)
+           var UnitPrice = $(this).parent().parent().prev().prev().prev().children('em').html().split('元/500g')[0]
+
+            $(this).parent().parent().next().html(count*UnitPrice+'元')
+
+            chack_count_price()
+        }
+    })
+
+    $('input[name="check_all"]').click(function () {
+        var isCheck = document.getElementsByClassName('check_all1')[0].checked
+            {#.checked;#}
+
+            if(isCheck){
+
+                checked_all(true);
+                chack_count_price()
+                }else{
+
+                checked_all(false);
+                chack_count_price()
+
+                }
+
+
+    })
+
+    $('input[name="goods"]').click(function () {
+        var isCheck = $(this)[0].checked
+        if(isCheck==false){
+            document.getElementsByClassName('check_all1')[0].checked=false
+
+        }else {
+              var flag = true
+            $("input[name^='goods']").each(function(i){
+        //input[name^='selected']"意思是匹配input的name以selected开头的表单。
+            if($(this)[0].checked==false){
+                flag = false
+            }
+        });
+              if (flag){
+                  document.getElementsByClassName('check_all1')[0].checked=true
+              }
+        }
+      chack_count_price()
+
+
+    })
+    $('.settlements .col04').click(function () {
+        var formdata=new FormData()
+        var token = $('input[name="csrfmiddlewaretoken"]').val()
+        var goods_list = []
+            $("input[name^='goods']").each(function(i){
+
+        //input[name^='selected']"意思是匹配input的name以selected开头的表单。
+            if($(this)[0].checked){
+                var j = {'pdi':$(this)[0].id, 'count':$(this).parent().nextAll('.col06').children().children('input').val()}
+
+                goods_list.push(JSON.stringify(j))
+            }
+        });
+        formdata.append('goods_list',goods_list)
+        formdata.append('csrfmiddlewaretoken',token)
+
+        $.ajax({
+            url:'',
+            type:'post',
+            dataType:'json',
+            data:formdata,
+            processData: false,
+            contentType: false,
+            success:function (data) {
+                if (data['code']){
+                    location.href='/order'
+                }
+
+            }
+        })
+
+    })
+
+    function inchane(event) {
+
+        var count = $(event).val()
+
+
+        if (count<1){
+           $(event).parent().parent().prev().prev().prev().prevAll('.col01').children()[0].checked=false
+
+        }
+        $(event).next().val(count)
+       var UnitPrice = $(event).parent().parent().prev().prev().prev().children('em').html().split('元/500g')[0]
+
+        $(event).parent().parent().next().html(count*UnitPrice+'元')
+
+        chack_count_price()
+
+
+    }
+    $('.del').click(function () {
+        var token = $('input[name="csrfmiddlewaretoken"]').val()
+        var goods_id = $(this)[0].id
+        $.ajax({
+            url:'/delorder/',
+            type:'post',
+            data:{'goods_id':goods_id,'csrfmiddlewaretoken':token},
+            success:function (data) {
+                if(data['code']){
+                    window.location.reload();
+                }
+
+            }
+        })
+
+    })
+
+    </script>
+{% endblock %}

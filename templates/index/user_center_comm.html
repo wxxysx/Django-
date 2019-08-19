@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+{% load staticfiles %}
+{% block css %}
+    <style>
+        a:hover{
+            color: rgba(255,108,54,0.98);
+        }
+    </style>
+{% endblock %}
+{% block body %}
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+{% include 'include/user_menu.html' %}
+		</div>
+    {% csrf_token %}
+		<div class="right_content clearfix">
+				<h3 class="common_title2">商品评价</h3>
+            {% for comm in comm_list %}
+				<ul class="order_list_th w978 clearfix">
+{#					<li class="col01">{{ order.order_time }}</li>#}
+					<li class="col01">{{ comm.create_time | date:'Y-m-d H:i:s' }}</li>
+					<li class="col02">商品名称：{{ comm.goods__name }}</li>
+{#                    {% if order.is_pay %}#}
+                     <li class="col02 stress">评论内容:{{ comm.text }}</li>
+                  <li class="col03"><a></a></li>
+                    <li id="{{ comm.pk }}" class="oper_btn"><a>删除</a></li>
+				</ul>
+
+
+
+            {% endfor %}
+            {% if comm_list %}
+				<div class="pagenation">
+					{{ page|safe }}
+				</div>
+        {% endif %}
+		</div>
+	</div>
+
+    {% csrf_token %}
+
+
+
+	
+{% endblock %}
+
+{% block js %}
+    <script>
+     $('.setcomment').addClass('active')
+    $('.delcomm').click(function () {
+        var token = $('input[name="csrfmiddlewaretoken"]').val()
+        var id  = $(this)[0].id
+        $.ajax({
+            url:'',
+            type:'post',
+            data:{'id':id,'csrfmiddlewaretoken':token},
+            success:function (data) {
+                if(data['code']){
+                    window.location.reload();
+                }
+
+            }
+        })
+
+    })
+    </script>
+{% endblock %}

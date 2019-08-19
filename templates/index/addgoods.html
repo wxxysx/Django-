@@ -1,0 +1,269 @@
+{% extends 'layout1.html' %}
+{% load staticfiles %}
+{% block left_menu %}
+    {% include 'include/left_menu.html' %}
+{% endblock %}
+{% block content  %}
+
+<h1 class="col-lg-offset-5">添加商品</h1>
+<div class="container-fluid col-lg-offset-3">
+  <div class="row">
+      <div class="col-xs-12 col-md-8">
+          {% csrf_token %}
+    {% for tag in form %}
+        <div class="form-group">
+            <label for="{{ tag.auto_id }}" class="control-label" >{{ tag.label }}</label>
+            <span class="error_msg" id="error_{{ tag.auto_id }}" style="color: red;float: right"></span>
+            {{tag }}
+        </div>
+    {% endfor %}
+      <div class="form-group" style="display: inline-block;">
+        <label for="goodsimg">商品图片<br>
+            <img  class="img-rounded" alt="140x140" style="width: 140px; height: 140px;" src="{% static 'img/index/dimg.png' %}" data-holder-rendered="true" id="goodsimg1">
+
+        </label>
+
+        <input type="file" id="goodsimg" style="display: none">
+
+      </div>
+{#      <div class="form-group" style="display: inline-block;margin-left: 100px">#}
+{#        <label for="ggimg">广告图片760*270 <br>#}
+{#            <img  class="img-rounded" alt="140x140" style="width: 140px; height: 140px;" src="{% static 'img/index/dimg.png' %}" data-holder-rendered="true" id="ggimg1">#}
+{##}
+{#        </label>#}
+{##}
+{#        <input type="file" id="ggimg" style="display: none">#}
+{##}
+{#      </div>#}
+    <br>
+    <input type="button" class="btn-default btn col-lg-offset-3" value="添加" id="reg_sub" style="display: inline-block;">
+{#    <input type="button" class="btn-default btn col-lg-offset-3" value="添加后不跳转" id="reg_sub1" style="display: inline-block;margin-left: 50px">#}
+
+      </div>
+
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+    <script charset="utf-8" src="/static/editor/kindeditor-4.1.11-zh-CN/kindeditor/kindeditor-all-min.js"></script>
+    <script>
+
+        var token=document.cookie.split('=')[1]
+                KindEditor.ready(function(K) {
+                // #content这个是页面上textarea的ID
+                window.editor = K.create('#content',{
+                    // 配置编辑框的高度
+                    height:'400px',
+                    // 服务器接收文件的地址  也就是上传文件的地址
+                    uploadJson:'/app01/upload/',
+                    // 在这个里面可以添加一些其他 需要上传到服务器的字段，这里添加的是CSRF
+                    extraFileUploadParams:{'csrfmiddlewaretoken':token},
+                    // 上传文件的文件名
+                    filePostName:'ArticleImg',
+                    // 这里可以选则需要的功能
+                    item:[
+        'source', '|', 'undo', 'redo', '|', 'preview',  'template', 'code', 'cut', 'copy', 'paste',
+        'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+        'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+        'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
+        'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+        'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|',
+          'insertfile', 'table', 'hr', 'emoticons',  'pagebreak',
+        'anchor', 'link', 'unlink', '|', 'about'
+],
+                    //添加了这几句之后可以在jQuery中使用 .val 的方式来获取编辑框的内容 'image', 'multiimage','print',
+        afterCreate : function() {
+         this.sync();
+        },
+        afterBlur:function(){
+            this.sync();
+        }
+                });
+
+        });
+
+
+        $('#goodsimg').change(function () {
+
+    if($(this).val()!=''){
+        //读取用户上传的，文件对象
+        var file =$(this)[0].files[0];
+        // new一个文件读取器
+        var readfile=new FileReader();
+        //使用读取器读取文件路径
+        readfile.readAsDataURL(file);
+        //由于读取器是单独的进程，一步读取，所以需要使用readfile.onload来等来读取器读取完成，之后在进行img地址的更新
+        readfile.onload=function () {
+            //img地址更新
+            $('#goodsimg1').attr('src',readfile.result)
+
+        }
+        // console.log($(this)[0].window.URL.createObjectURL($(this)[0].files[0]))
+    }
+
+})
+{#$('#ggimg').change(function () {#}
+{##}
+{#    if($(this).val()!=''){#}
+{#        //读取用户上传的，文件对象#}
+{#        var file =$(this)[0].files[0];#}
+{#        // new一个文件读取器#}
+{#        var readfile=new FileReader();#}
+{#        //使用读取器读取文件路径#}
+{#        readfile.readAsDataURL(file);#}
+{#        //由于读取器是单独的进程，一步读取，所以需要使用readfile.onload来等来读取器读取完成，之后在进行img地址的更新#}
+{#        readfile.onload=function () {#}
+{#            //img地址更新#}
+{#            $('#ggimg1').attr('src',readfile.result)#}
+{##}
+{#        }#}
+{#        // console.log($(this)[0].window.URL.createObjectURL($(this)[0].files[0]))#}
+{#    }#}
+{##}
+{#{)#}
+
+    // 错误信息的隐藏
+$('.form-control').focusin(function () {
+    $('#error_'+$(this)[0].id).fadeOut()
+})
+// 数据上传
+$("#reg_sub").click(function () {
+
+
+    var token=$('input[name="csrfmiddlewaretoken"]').val()
+
+    var form_list=$('.form-control').serializeArray()
+
+    var error=[]
+    // #先创建一个FormData，用来存放Form表单数据
+    var formdata=new FormData()
+    for (var index in form_list){
+        var name=form_list[index].name
+        var val=form_list[index].value
+        if (val==''){
+            error.push('error_id_'+name)
+        }else{
+            if(name.search('csrf')==-1)
+            formdata.append(name,val)
+        }
+    }
+    // 添加文件数据
+    formdata.append("img",$("#goodsimg")[0].files[0]);
+    {#formdata.append("ggimg",$("#ggimg")[0].files[0]);#}
+    formdata.append('csrfmiddlewaretoken',token)
+    formdata.append('goods_details',$('#content').val())
+    if (error.length>0){
+
+        for (var index in error){
+            var error_obj=$('#'+error[index])
+             error_obj.text('该字段不能为空！！')
+             error_obj.fadeIn()
+        }
+    }
+    else{
+
+    $.ajax({
+        url:"",
+        {#headers:{'X-CSRFTOKEN':token},#}
+        type:"post",
+        contentType:false, //#数据预处理的编码格式
+        processData:false,//#是否需要数据预处理，ajax上传文件不需要预处理，都交给FormData处理
+        data:formdata,
+        success:function (data) {
+            var code=data['code']
+            if (code==-1){
+                var msg_list=data['msg']
+                for (var k in msg_list){
+                    //  有错误
+                    if(k=='__all__'){
+                        var error_obj=$('#error_id_r_pwd')
+                    }else{
+                    var error_obj=$('#error_id_'+k)}
+                    error_obj.text(msg_list[k][0])
+                    error_obj.fadeIn()
+                }
+            }else if(code==1){
+
+            //    成功之后
+                location.href='/addgoods'
+
+            }
+        }
+    })}
+}
+)
+    $("#reg_sub1").click(function () {
+
+
+    var token=$('input[name="csrfmiddlewaretoken"]').val()
+
+    var form_list=$('.form-control').serializeArray()
+
+    var error=[]
+    // #先创建一个FormData，用来存放Form表单数据
+    var formdata=new FormData()
+    for (var index in form_list){
+        var name=form_list[index].name
+        var val=form_list[index].value
+        if (val==''){
+            error.push('error_id_'+name)
+        }else{
+            if(name.search('csrf')==-1)
+            formdata.append(name,val)
+        }
+    }
+    // 添加文件数据
+    formdata.append("img",$("#goodsimg")[0].files[0]);
+    formdata.append("ggimg",$("#ggimg")[0].files[0]);
+    formdata.append('csrfmiddlewaretoken',token)
+    if (error.length>0){
+
+        for (var index in error){
+            var error_obj=$('#'+error[index])
+             error_obj.text('该字段不能为空！！')
+             error_obj.fadeIn()
+        }
+    }
+    else{
+
+    $.ajax({
+        url:"",
+        {#headers:{'X-CSRFTOKEN':token},#}
+        type:"post",
+        contentType:false, //#数据预处理的编码格式
+        processData:false,//#是否需要数据预处理，ajax上传文件不需要预处理，都交给FormData处理
+        data:formdata,
+        success:function (data) {
+            var code=data['code']
+            if (code==-1){
+                var msg_list=data['msg']
+                for (var k in msg_list){
+                    //  有错误
+                    if(k=='__all__'){
+                        var error_obj=$('#error_id_r_pwd')
+                    }else{
+                    var error_obj=$('#error_id_'+k)}
+                    error_obj.text(msg_list[k][0])
+                    error_obj.fadeIn()
+                }
+            }else if(code==1){
+
+            //    成功之后
+                location.href='/addgoods'
+
+            }
+        }
+    })}
+}
+)
+
+    $(".list-group-item").each(function(i){
+           $(this).removeClass('active')
+
+        });
+    $('.addgoods').addClass('active')
+    </script>
+{% endblock %}

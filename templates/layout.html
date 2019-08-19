@@ -1,0 +1,117 @@
+{% load staticfiles %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>惠东水产销售网站-首页</title>
+    <link rel="shortcut icon" href="{% static 'index/images/tubiao.ico' %}" type="image/x-icon">
+	<link rel="stylesheet" type="text/css" href="{% static 'index/css/reset.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'index/css/main.css' %}">
+	<script type="text/javascript" src="{% static 'index/js/jquery-3.2.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'index/js/jquery-ui.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'index/js/slide.js' %}"></script>
+
+
+    {% block css %} {% endblock %}
+</head>
+<body>
+<div class="header_con">
+		<div class="header">
+			<div class="welcome fl">您好，欢迎光临惠东水产销售网站!</div>
+			<div class="fr">
+                {% if request.user.is_authenticated %}
+				<div class="login_info fl" style="display: inline-block">
+					欢迎您：<em>{{ request.user.username }}</em>
+				</div>
+                {% else %}
+				<div class="login_btn fl">
+					<a href="/login">登录</a>
+					<span>|</span>
+					<a href="/reg">注册</a>
+				</div>
+                {% endif %}
+            {% if request.user.is_authenticated %}
+				<div class="user_link fl">
+					<span>|</span>
+                    <a href="/index">首页</a>
+					<span>|</span>
+					<a href="/usercenterinfo">用户中心</a>
+					<span>|</span>
+					<a href="/cart">我的购物车</a>
+					<span>|</span>
+					<a href="/usercenterorder">我的订单</a>
+                {% if request.user.is_super %}
+                	<span>|</span>
+					<a href="/super">管理员管理</a>
+                {% endif %}
+                           	<span>|</span>
+					<a href="/logout">退出</a>
+            {% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="search_bar clearfix">
+		<a href="/index" class="logo fl"><img src='{% static "images/logo.png" %}'></a>
+		<div class="search_con fl">
+			<input type="text"  id="txtKeyWord" class="input_text fl" name="" placeholder="搜索商品"  onkeydown="searchenter(event)">
+			<input type="button" id="btnSearch" class="input_btn fr" name="" value="搜索">
+		</div>
+		<div class="guest_cart fr">
+			<a href="/cart" class="cart_name fl">我的购物车</a>
+			<div class="goods_count fl" id="show_count">{{ shopping_car_count }}</div>
+		</div>
+	</div>
+
+  {% block body %} {% endblock %}
+
+    <script type="text/javascript" src="{% static 'index/js/jquery-3.2.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'index/js/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript">
+    $('.input_btn').click(function () {
+        var goods_name = $('.input_text').val()
+        location.href = '/goodslist?goods_name='+goods_name
+
+    })
+
+
+</script>
+<script>
+    //按钮回车事件
+    function searchenter(event) {
+        //方法名，函数名
+        var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode; //判断是不是事件。
+        if (keyCode == 13) {
+            //判断按键值是不是回车。
+            if ($('#txtKeyWord' ).val() == '') {
+                //如果文本框为空就退出。
+                return false ;
+            }
+            document.all.btnSearch.click();
+        }
+    }
+</script>
+{% block js %}
+
+
+ {% endblock %}
+<div class="footer">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="/adminlogin">后台管理</a>
+		</div>
+		<p>惠东水产销售网站</p>
+		<p>联系方式（QQ）：2774578928</p>
+	</div>
+</body>
+
+
+
+</html>

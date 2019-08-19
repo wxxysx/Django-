@@ -1,0 +1,65 @@
+{% extends 'layout1.html' %}
+{% load staticfiles %}
+{% block left_menu%}
+    {% include  'include/left_menu.html' %}
+{% endblock %}
+
+{% block content %}
+     <table class="table table-bordered table-hove" style="margin-top: 100px">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>用户名</td>
+                <td>地址</td>
+                <td>邮箱</td>
+                <td>手机</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+     <tbody>
+
+        {% for item in userlist %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.username }}</td>
+                <td>{{ item.address }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.phone}}</td>
+                <td>
+                    <a id="{{ item.pk }}" class="delcomm">删除</a>
+                    <a href="/useredit?uid={{ item.pk }}" class="delcomm">编辑</a>
+                </td>
+            </tr>
+     {% endfor %}
+     </tbody>
+    </table>
+    {{ page|safe }}
+    {% csrf_token %}
+{% endblock %}
+{% block js %}
+    <script>
+    $(".list-group-item").each(function(i){
+           $(this).removeClass('active')
+
+        });
+    $('.superuser').addClass('active')
+
+    $('.delcomm').click(function () {
+        var order_id = $(this)[0].id
+        var token=$('input[name="csrfmiddlewaretoken"]').val()
+        $.ajax({
+            url:'',
+            type:'post',
+            data:{'order_id':order_id,'csrfmiddlewaretoken':token},
+            success:function (data) {
+                if (data['code']){
+                    window.location.reload();
+                }
+
+            }
+
+        })
+
+    })
+    </script>
+{% endblock %}

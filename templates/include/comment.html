@@ -1,0 +1,48 @@
+{#评论列表#}
+    <div id="blog-comments-placeholder">
+    <span class="{{ goods.pk }}" id="article_id"></span>
+        <div id="comments_pager_top"></div>
+        <!--done-->
+        <div class="feedback_area_title">评论列表</div>
+        <div class="feedbackNoItems"></div>
+        <span class="temp_msg" style="color: red">评论加载中...</span>
+
+        <div id="comments_pager_bottom"></div>
+        {% if orders_list %}
+        <a id="1" class="uppage btn btn-default btn-sm">上一页</a><a id="2" class="downpage btn btn-default btn-sm">下一页</a>
+        {% endif %}
+    </div>
+
+    {#    评论框#}
+    <div id="comment_form_container">
+        <div id="div_digg" class="{{goods.pk }}" style="display: none"></div>
+
+        {% if request.user.is_authenticated %}
+            <div id="commentform_title">发表评论</div>
+            <span id="tip_comment" style="color:Red"></span>
+            <p>
+                昵称：<input id="tbCommentAuthor" class="author" disabled="disabled" size="50"
+                          value="{{ request.user.username }}" type="text">
+            </p>
+            <div class="commentbox_main">
+                <div class="commentbox_title">
+                    <div class="commentbox_title_left">评论内容：</div>
+
+                </div>
+                <div class="clear"></div>
+                <textarea id="tbCommentBody" class="comment_textarea"></textarea>
+            </div>
+            <p id="commentbox_opt">
+                <input id="btn_comment_submit" class="comment_btn" value="提交评论" type="button"><span class="eror_msg" style="color: red"></span>
+
+            </p>
+            <div id="tip_comment2" style="color:Red"></div>
+
+            <div style="display:none">
+                <span id="comment_edit_id"></span><span id="span_parentcomment_id"></span>
+                <span id="span_parent_id"></span>
+                <span id="span_comment_replyto"></span>
+                <span id="span_comment_posted"></span>
+            </div>
+        {% endif %}
+    </div>

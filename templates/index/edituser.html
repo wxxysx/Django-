@@ -1,0 +1,25 @@
+{% extends 'layout1.html' %}
+{% load staticfiles %}
+{% block left_menu%}
+    {% include  'include/left_menu.html' %}
+{% endblock %}
+{% block content %}
+    <h1 class="col-lg-offset-5">修改用户</h1>
+    <div class="container-fluid col-lg-offset-3">
+      <div class="row">
+      <div class="col-xs-12 col-md-8">
+      <form method="post">
+                  {% csrf_token %}
+            {% for tag in form %}
+                <div class="form-group">
+                    <label for="{{ tag.auto_id }}" class="control-label" >{{ tag.label }}</label>
+                    <span class="error_msg" id="error_{{ tag.auto_id }}" style="color: red;float: right"></span>
+                    {{tag }}
+                </div>
+            {% endfor %}
+        <input type="submit" value="修改" class="btn btn-default">
+      </form>
+      </div>
+      </div>
+    </div>
+{% endblock %}

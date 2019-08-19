@@ -1,0 +1,288 @@
+{% extends 'layout.html' %}
+{% load staticfiles %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'index/css/article_details.css' %}">
+    <link rel="stylesheet" href="{% static 'plug/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}"/>
+{#    <link rel="stylesheet" href="{% static 'plug/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}"></link>#}
+    <style type="text/css">
+        .minus1{
+            bottom: -1px;
+            display: block;
+            width: 15px;
+            text-align: center;
+            height: 22px;
+            line-height: 22px;
+            overflow: hidden;
+            background: #f1f1f1;
+            color: #666;
+            position: absolute;
+            right: -1px;
+            border: 1px solid #ccc;
+        }
+        .add1{
+            top: -1px;
+
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            display: block;
+            width: 15px;
+            text-align: center;
+            height: 22px;
+            line-height: 22px;
+            overflow: hidden;
+            background: #f1f1f1;
+            color: #666;
+            position: absolute;
+            right: -1px;
+            border: 1px solid #ccc;
+        }
+        .num_show{
+            display: block;
+            width: 43px;
+            height: 42px;
+            line-height: 42px;
+            position: absolute;
+            top: 1px;
+            left: 0;
+            border: none;
+            border: 0;
+            text-align: center;
+        }
+        .goods_num{
+            width: 58px;
+            height: 44px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            position: relative;
+            margin-right: 10px;
+            margin-left: 50px;
+            {#float: left;#}
+        }
+    </style>
+{% endblock %}
+{% block body %}
+
+
+
+	<div class="navbar_con">
+		<div class="navbar clearfix">
+			<div class="subnav_con fl">
+				<h2>全部商品分类</h2>
+				<span></span>			
+				<ul class="subnav">
+            {% for gclass in goodsclass %}
+			<li><a href="/goodslist/?class={{ gclass.pk }}" class="{{ gclass.style }}">{{ gclass.title }}</a></li>
+
+            {% endfor %}
+				</ul>
+			</div>
+			<ul class="navlist fl">
+				<li><a href="/index">首页</a></li>
+
+			</ul>
+		</div>
+	</div>
+
+	<div class="breadcrumb">
+		<a href="/index">全部分类</a>
+		<span>></span>
+		<a href="/goodslist/?class={{ goods.goodsclass_id }}">{{ goods.goodsclass__title }}</a>
+		<span>></span>
+		<a href="#">商品详情</a>
+	</div>
+
+	<div class="goods_detail_con clearfix">
+		<div class="goods_detail_pic fl"><img src="/media/{{goods.goodsimg__img}}" style="width: 350px"></div>
+
+		<div class="goods_detail_list fr">
+			<h3>{{ goods.name}}</h3>
+			<p>{{ goods.goods_details |safe }}</p>
+			<div class="prize_bar">
+				<span class="show_pirze">¥<em>{{ goods.price }}</em></span>
+				<span class="show_unit">单  位：500g</span>
+			</div>
+			<div class="goods_num clearfix">
+				<div class="num_name fl">数 量：</div>
+				<div class="num_add fl">
+					<input type="text" class="num_show fl" value="1" name="count" onchange=input_change()>
+					<a href="javascript:;" class="add1 fr">+</a>
+					<a href="javascript:;" class="minus1 fr">-</a>
+				</div> 
+			</div>
+			<div class="total">总价：<em>{{ goods.price }}元</em></div>
+			<div class="operate_btn">
+				<a href="javascript:;" class="buy_btn">立即购买</a>
+                <a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
+			</div><span id="msg" style="display: none;float: right;color: red"></span>
+		</div>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+            {% csrf_token %}
+				<h3>新品推荐</h3>
+				<ul>
+                    {% for goods in goods_c %}
+					<li>
+						<a href="/goodsdetail?goodsid={{ goods.pk }}"><img src="/media/{{goods.goodsimg__img}}"></a>
+						<h4><a href="/goodsdetail?goodsid={{ goods.pk }}">{{goods.name  }}</a></h4>
+						<div class="prize">￥{{ goods.price }}</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<ul class="detail_tab clearfix">
+				<li class="active" id="goods_details_title">商品介绍</li>
+				<li id="goods_details_comment">评论</li>
+			</ul>
+
+			<div class="tab_content" id="goods_details_body">
+				<dl>
+					<dt>商品详情：</dt>
+					<dd>{{ goods.goods_details |safe }}</dd>
+				</dl>
+			</div>
+			<div class="tab_content" id="goods_comment_body" style="display: none">
+				<dl>
+					<dt></dt>
+					<dd>{% include 'include/comment.html' %}</dd>
+				</dl>
+			</div>
+
+		</div>
+	</div>
+
+
+	<div class="add_jump"></div>
+{% endblock %}
+    {% block js %}
+
+    <script type="text/javascript" src="{% static 'plug/jquery/jquery-3.2.1.js' %}"></script>
+	<script>
+    　　function GetUrlRelativePath()
+　　{
+　　　　var url = document.location.toString();
+　　　　var arrUrl = url.split("//");
+
+　　　　var start = arrUrl[1].indexOf("/");
+　　　　var relUrl = arrUrl[1].substring(start);//stop省略，截取从start开始到结尾的所有字符
+
+　　　　if(relUrl.indexOf("?") != -1){
+　　　　　　relUrl = relUrl.split("?")[0];
+　　　　}
+　　　　return relUrl;
+　　}
+　　function GetUrlPara()
+　　{
+　　　　var url = document.location.toString();
+　　　　var arrUrl = url.split("?");
+
+　　　　var para = arrUrl[1];
+　　　　return para;
+　　}
+
+{#    页面初始化的时候查看 数量框里的数值是多少 按照数量显示总额#}
+    $('.total em').html(Number($('input[name="count"]').val())*Number({{ goods.price }}))
+        {# input 框中的数量发生变化，同时也改变金额#}
+        function input_change() {
+            var val = $('input[name="count"]').val()
+            if (Number(val) < 1){
+                $('input[name="count"]').val('1')
+                $('.total em').html(Number($('input[name="count"]').val())*Number({{ goods.price }}))
+            }
+            else {
+            $('.total em').html(Number($('input[name="count"]').val())*Number({{ goods.price }}))
+        }
+        }
+        {# 当+号被点击是发生的事件 #}
+        $('.add1').click(function () {
+            var count = $('input[name="count"]').val()
+            $('input[name="count"]').val(Number(count)+1)
+            input_change()
+        })
+{# 当- 号被点击是发生的事件 #}
+    $('.minus1').click(function () {
+        var count = $('input[name="count"]').val()
+        if (count >1) {
+            $('input[name="count"]').val(Number(count) - 1)
+            input_change()
+        }
+    })
+    {#  点击加入购物车时发生的事件 #}
+    $('.add_cart').click(function () {
+        var count = $('input[name="count"]').val()
+        var goodsid = {{ goods.pk }}
+        var token = $('input[name="csrfmiddlewaretoken"]').val()
+        if (count>0) {
+            $.ajax({
+                url: '',
+                type: 'post',
+
+                data: {'csrfmiddlewaretoken': token, 'goodsid': goodsid, 'count': count},
+                success(data) {
+                    console.log(data)
+                    $('#msg').html(data['msg'])
+                    $('#msg').show()
+                    if (data['code']) {
+                        {#<div class="goods_count fl" id="show_count">{{ shopping_car_count }}</div>#}
+                        $('.goods_count').html(data['shopping_car_count'])
+                    }else {
+                        location.href ='/login/?next='+ GetUrlRelativePath()+'?'+GetUrlPara()
+                    }
+
+                }
+            })
+        }else {
+             $('#msg').html('商品数量错误...')
+                    $('#msg').show()
+        }
+    })
+
+    {#  点击购买时发生的事件  /login/?next=/cart/#}
+    $('.buy_btn').click(function () {
+         var count = $('input[name="count"]').val()
+        var goodsid = {{ goods.pk }}
+        var token = $('input[name="csrfmiddlewaretoken"]').val()
+        if (count > 0) {
+            $.ajax({
+                url: '',
+                type: 'post',
+
+                data: {'csrfmiddlewaretoken': token, 'goodsid': goodsid, 'count': count, 'flag': true},
+                success(data) {
+
+                    $('#msg').show()
+                    if (data['code']) {
+                        location.href='/order'
+                    }else {
+                        location.href ='/login/?next='+ GetUrlRelativePath()+'?'+GetUrlPara()
+                    }
+
+                }
+            })
+        }else{
+            $('#msg').html('商品数量错误...')
+                    $('#msg').show()
+        }
+
+    })
+    $('#goods_details_title').click(function () {
+        $(this).addClass('active')
+        $('#goods_details_comment').removeClass('active')
+        $('#goods_comment_body').hide()
+        $('#goods_details_body').show()
+    })
+        $('#goods_details_comment').click(function () {
+        $(this).addClass('active')
+        $('#goods_details_title').removeClass('active')
+        $('#goods_comment_body').show()
+        $('#goods_details_body').hide()
+    })
+	</script>
+    <script type="text/javascript" src="{% static 'index/js/comment.js' %}"></script>
+	{% endblock %}

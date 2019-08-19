@@ -1,0 +1,101 @@
+
+{% load staticfiles %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>惠东水产销售网站-登录</title>
+    <link rel="shortcut icon" href="{% static 'index/images/tubiao.ico' %}" type="image/x-icon">
+	<link rel="stylesheet" type="text/css" href="{% static 'index/css/reset.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'index/css/main.css' %}">
+</head>
+<body>
+	<div class="login_top clearfix">
+		<a href="#" class="login_logo"><img src='{% static  "images/logo02.png"%}'></a>
+	</div>
+
+	<div class="login_form_bg">
+		<div class="login_form_wrap clearfix">
+			<div class="login_banner fl"></div>
+			<div class="slogan fl">日夜兼程 · 急速送达</div>
+			<div class="login_form fr">
+				<div class="login_title clearfix">
+					<h1>用户登录</h1>
+					<a href="/reg">立即注册</a>
+				</div>
+				<div class="form_input">
+					<form>
+                        {% csrf_token %}
+						<input type="text" name="username" class="name_input" placeholder="请输入用户名">
+                        <div class="pwd_error"><span class="error_tip">提示信息</span></div>
+						<input type="password" name="pwd" class="pass_input" placeholder="请输入密码">
+
+						<div class="more_input clearfix">
+{#							<input type="checkbox" name="">#}
+{#							<label>记住用户名</label>#}
+							<a href="/newpwd">忘记密码</a>
+						</div>
+						<input type="button" name="" value="登录" class="input_submit">
+
+					</form>
+
+				</div>
+			</div>
+		</div>
+	</div>
+<div class="footer">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="/adminlogin">后台管理</a>
+		</div>
+		<p>惠东水产销售网站</p>
+		<p>联系方式（QQ）：2774578928</p>
+	</div>
+
+    <script type="text/javascript" src="{% static 'plug/jquery/jquery-3.2.1.js' %}"></script>
+   <script type="text/javascript">
+    $('.input_submit').click(function () {
+        var token = $('input[name="csrfmiddlewaretoken"]').val()
+        var username = $('input[name="username"]').val()
+        var pwd = $('input[name="pwd"]').val()
+        $.ajax({
+            url:'',
+            type:'post',
+            data:{'username':username,'pwd':pwd,'csrfmiddlewaretoken':token},
+            success(data){
+                if (data['code'] === 1){
+                        if (data['next']){
+                            location.href =data['next']
+                        }else {
+                        location.href ='/index'
+                            }
+                }
+                else if(data['code'] === 2){
+                    location.href ='/super/'
+
+                }else{
+                    {#console.log(data)#}
+                            $('.error_tip').html(data['mag'])
+                            $('.error_tip').show();
+                            $('.pwd_error').show();
+                }
+
+
+
+            }
+
+        })
+
+    })
+
+
+</script>
+</body>
+</html>
+
+

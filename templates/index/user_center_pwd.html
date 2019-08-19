@@ -1,0 +1,103 @@
+{% extends 'layout.html' %}
+{% load  staticfiles %}
+{% block body %}
+
+
+
+
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+{% include 'include/user_menu.html' %}
+		</div>
+		<div class="right_content clearfix">
+
+				<h3 class="common_title2">编辑信息</h3>
+				<div class="site_con">
+{#					<form>#}
+                        {% csrf_token %}
+						<div class="form_group">
+							<label>用户名：</label>
+							<input type="text" name="username" value="{{ request.user.username }}">
+						</div>
+						<div class="form_group form_group2">
+							<label>详细地址：</label>
+							<textarea class="site_area">{{ request.user.address }}</textarea>
+						</div>
+						<div class="form_group">
+							<label>手机：</label>
+							<input type="text" name="phone" value="{{ request.user.phone }}">
+						</div>
+                        <div class="form_group">
+							<label>密码：</label>
+							<input type="password" name="pwd">
+						</div>
+						<input type="button" name="" value="提交" class="info_submit"><span class="error" style="display: none;color: red;margin-left: 10px"></span>
+{#					</form>#}
+				</div>
+		</div>
+	</div>
+
+
+
+
+{% endblock %}
+{% block js %}
+    <script type="text/javascript" src="{% static 'plug/jquery/jquery-3.2.1.js' %}"></script>
+    <script>
+    function strlen(str){
+    var len = 0;
+    for (var i=0; i<str.length; i++) {
+     var c = str.charCodeAt(i);
+    //单字节加1
+     if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+       len++;
+     }
+     else {
+      len+=2;
+     }
+    }
+    return len;
+}
+        $('.setinfo').addClass('active')
+        $('.info_submit').click(function () {
+            var name = $('input[name="username"]').val()
+            var yb = $('input[name="yb"]').val()
+            var phone = $('input[name="phone"]').val()
+            var address = $('.site_area').val()
+            var token = $('input[name="csrfmiddlewaretoken"]').val()
+            var pwd = $('input[name="pwd"]').val()
+
+            if (strlen(phone) != 11  ) {
+                $('.error').html('手机号码必须11位...')
+                $('.error').show()
+            }else if(address ===''){
+                $('.error').html('地址不能为空...')
+                $('.error').show()
+            }
+            else
+                {
+                    $.ajax({
+                        url: '',
+                        type: 'post',
+                        data: {
+                            'name': name,
+                            'yb': yb,
+                            'phone': phone,
+                            'address': address,
+                            'csrfmiddlewaretoken': token,
+                            'pwd': pwd
+                        },
+                        success: function (data) {
+                            if (data['code']) {
+                                location.href = document.referrer;
+                            }
+
+                        }
+                    })
+                }
+
+        })
+
+    </script>
+{% endblock %}

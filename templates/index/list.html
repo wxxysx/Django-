@@ -1,0 +1,114 @@
+{% extends 'layout.html' %}
+{% load staticfiles %}
+
+{% block body %}
+
+
+	<div class="navbar_con">
+		<div class="navbar clearfix">
+			<div class="subnav_con fl">
+				<h1>全部商品分类</h1>	
+				<span></span>			
+				<ul class="subnav">
+					 {% for gclass in goodsclass %}
+			<li><a href="/goodslist/?class={{ gclass.pk }}" class="{{ gclass.style }}">{{ gclass.title }}</a></li>
+
+            {% endfor %}
+				</ul>
+			</div>
+			<ul class="navlist fl">
+				<li><a href="/index">首页</a></li>
+
+			</ul>
+		</div>
+	</div>
+
+	<div class="breadcrumb">
+		<a href="/index">全部分类</a>
+		<span>></span>
+		<a href="#">{{ goods_list.0.goodsclass__title }}</a>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul class="goods_type_list clearfix">
+                    {% for item in goods_c %}
+					<li>
+						<a href="/goodsdetail?goodsid={{ item.pk }}"><img src="/media/{{item.goodsimg__img}}"></a>
+						<h4><a href="#">{{ item.name }}</a></h4>
+						<div class="prize">￥{{ item.price }}</div>
+					</li>
+	                {% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+                {% if price_flag %}
+				    <a  href="/goodslist/?{{ d }}" class="">默认</a>
+                {% else %}
+				    <a href="/goodslist/?{{ d }}" class="active">默认</a>
+                {% endif %}
+                {% if order %}
+				<a href="/goodslist/?{{ p }}" class="{{ price_flag }}">价格 {{ f }}</a>
+                {% else %}
+				<a href="/goodslist/?{{ p }}&order=1" class="{{ price_flag }}">价格</a>
+                {% endif %}
+
+			</div>
+
+			<ul class="goods_type_list clearfix">
+                {% for item in goods_list %}
+				<li>
+					<a href="/goodsdetail?goodsid={{ item.pk }}"><img src="/media/{{item.goodsimg__img}}"></a>
+					<h4><a href="detail.html">{{ item.name }}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{ item.price }}</span>
+						<span class="unit">{{ item.price }}/500g</span>
+						<a href="#" class="add_goods" id ={{ item.pk }} title="加入购物车"></a>
+
+					</div>
+				</li>
+
+                {% endfor %}
+            {% csrf_token %}
+			</ul>
+
+			<div class="pagenation">
+                {{ page|safe }}
+			</div>
+		</div>
+	</div>
+
+
+	
+{% endblock %}
+{% block js %}
+    <script>
+        $('.add_goods').click(function () {
+        var count = 1
+        var goodsid = $(this)[0].id
+        var token = $('input[name="csrfmiddlewaretoken"]').val()
+              $.ajax({
+                url: '/goodsdetail/',
+                type: 'post',
+
+                data: {'csrfmiddlewaretoken': token, 'goodsid': goodsid, 'count': count},
+                success(data) {
+                    $('#msg').html(data['msg'])
+                    $('#msg').show()
+                    if (data['code']) {
+                        {#<div class="goods_count fl" id="show_count">{{ shopping_car_count }}</div>#}
+                        $('.goods_count').html(data['shopping_car_count'])
+                    }
+
+                }
+            })
+
+        })
+
+    </script>
+{% endblock %}

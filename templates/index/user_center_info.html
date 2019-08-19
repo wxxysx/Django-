@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+{% load staticfiles %}
+{% block body %}
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+{% include 'include/user_menu.html' %}
+		</div>
+		<div class="right_content clearfix">
+				<div class="info_con clearfix">
+				<h3 class="common_title2">基本信息</h3>
+						<ul class="user_info_list">
+							<li><span>用户名：</span>{{ request.user.username }}</li>
+							<li><span>联系方式：</span>{{ request.user.phone }}</li>
+							<li><span>联系地址：</span>{{ request.user.address }}</li>
+						</ul>
+				</div>
+				
+				<h3 class="common_title2">最近浏览</h3>
+				<div class="has_view_list">
+					<ul class="goods_type_list clearfix">
+                        {% for goods in goods %}
+				<li>
+					<a href="/goodsdetail/?goodsid={{ goods.goods_id }}"><img src="/media/{{goods.goods__goodsimg__img}}"></a>
+					<h4><a href="/goodsdetail/?goodsid={{ goods.goods_id }}">{{ goods.goods__name }}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{ goods.goods__price }}</span>
+						<span class="unit">{{ goods.goods__price }}/500g</span>
+						<a href="#" class="add_goods" id = "{{ goods.goods_id  }}" title="加入购物车"></a>
+					</div>
+				</li>
+                {% endfor %}
+                    {% csrf_token %}
+			</ul>
+		</div>
+		</div>
+	</div>
+
+
+
+	
+{% endblock %}
+{% block js %}
+    <script>
+        $('.info').addClass('active')
+          $('.add_goods').click(function () {
+        var count = 1
+        var goodsid = $(this)[0].id
+        var token = $('input[name="csrfmiddlewaretoken"]').val()
+              $.ajax({
+                url: '/goodsdetail/',
+                type: 'post',
+
+                data: {'csrfmiddlewaretoken': token, 'goodsid': goodsid, 'count': count},
+                success(data) {
+                    $('#msg').html(data['msg'])
+                    $('#msg').show()
+                    if (data['code']) {
+                        {#<div class="goods_count fl" id="show_count">{{ shopping_car_count }}</div>#}
+                        $('.goods_count').html(data['shopping_car_count'])
+                    }
+
+                }
+            })
+
+        })
+    </script>
+{% endblock %}

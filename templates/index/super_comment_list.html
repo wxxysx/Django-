@@ -1,0 +1,64 @@
+{% extends 'layout1.html' %}
+{% load staticfiles %}
+{% block left_menu%}
+    {% include  'include/left_menu.html' %}
+{% endblock %}
+{% block content %}
+     <table class="table table-bordered table-hove" style="margin-top: 100px">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>商品名称</td>
+                <td>评价用户</td>
+                <td>评价内容</td>
+                <td>评价时间</td>
+
+                <td>操作</td>
+            </tr>
+        </thead>
+     <tbody>
+
+        {% for item in comm_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.goods__name }}</td>
+                <td>{{ item.user__username }}</td>
+                <td>{{ item.text }}</td>
+                <td>{{ item.create_time| date:'Y-m-d H:i:s'}}</td>
+                <td><a id="{{ item.pk }}" class="delcomm">删除</a></td>
+            </tr>
+     {% endfor %}
+     </tbody>
+    </table>
+    {{ page|safe }}
+    {% csrf_token %}
+{% endblock %}
+
+
+{% block js %}
+    <script>
+    $(".list-group-item").each(function(i){
+           $(this).removeClass('active')
+
+        });
+    $('.setcomm').addClass('active')
+
+    $('.delcomm').click(function () {
+        var order_id = $(this)[0].id
+        var token=$('input[name="csrfmiddlewaretoken"]').val()
+        $.ajax({
+            url:'',
+            type:'post',
+            data:{'order_id':order_id,'csrfmiddlewaretoken':token},
+            success:function (data) {
+                if (data['code']){
+                    window.location.reload();
+                }
+
+            }
+
+        })
+
+    })
+    </script>
+{% endblock %}

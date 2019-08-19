@@ -1,0 +1,133 @@
+
+
+
+/* 评论框样式 */
+#commentform_title {
+    font: normal normal 16px/35px "Microsoft YaHei";
+    margin: 10px 0 30px;
+    border-bottom: 2px solid #cccccc;
+    background-image: none;
+    padding: 0;
+}
+
+#comment_form_container .author {
+    padding-left: 10px;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    width: 320px;
+    height: 20px;
+    background-image: none;
+}
+
+.commentbox_title {
+    width: 450px;
+}
+
+.commentbox_title_left {
+    font-size: 14px;
+}
+.commentbox_title_left {
+    float: left;
+}
+
+.commentbox_title_right {
+    float: left;
+}
+.commentbox_title_right {
+    float: right;
+    height: 22px;
+}
+
+.clear {
+    clear: both;
+}
+
+
+#comment_form_container .comment_textarea {
+    width: 362px;
+    height: 200px;
+    font-size: 13px;
+    padding: 8px;
+    margin-bottom: 10px;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+#comment_form_container{
+
+    margin-top: 50px;
+}
+
+.comment_btn {
+    width: 100px;
+    height: 38px;
+    padding: 8px 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    background: #21759b;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -webkit-transition: all 0.4s ease;
+    -moz-transition: all 0.4s ease;
+    -o-transition: all 0.4s ease;
+    -ms-transition: all 0.4s ease;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    outline: none;
+    text-decoration: none;
+}
+
+
+.comment_btn {
+    height: 26px;
+    width: 68px;
+    margin: 0;
+    padding: 0;
+    line-height: 22px;
+}
+
+
+/*  评论列表样式 */
+.list-group{
+
+    margin-left: 20px;
+}
+
+.Reply{
+    position: absolute;
+    right: 50px;
+}
+
+.feedback_area_title {
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 20px 0 10px;
+}
+
+.uppage,.downpage{
+    background-image: linear-gradient(to bottom,#f7f7f7 0,#f3f2f2 100%);
+    color: #333;
+    padding: 4px 1.2em;
+    border: 1px solid #ddd;
+    margin-left: 3px;
+    display: inline-block;
+    background-color: #f7f7f7;
+    vertical-align: middle;
+    text-align: right;
+
+}
+a:hover {
+    color: rgba(255,108,54,0.98); /*鼠标经过的颜色变化*/
+}
